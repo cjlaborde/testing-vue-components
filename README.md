@@ -1,25 +1,32 @@
-# Testing Vue.js Components
+### Mounting components wirh vue test utils
+1. `npm install --save-dev @vue/test-utils@1`
 
-[![](https://vueschool.s3.amazonaws.com/9318e19655ce267304ebf5df7eca7154/testing-vuejs-components.png)](https://vueschool.io/courses/learn-how-to-test-vuejs-components)
+2. Update snapshot `yarn jest specs/test.spec.js -u`
+3. shallowMounts
+   1. Is the same as normal mount method
+   2. But child components will get stub automatically
 
-This repository contains the the starting point of the [Testing Vue.js Components](https://vueschool.io/courses/learn-how-to-test-vuejs-components) course.
+```html
+  console.log specs/test.spec.js:21
 
-Learn how to test your Vue.js components like a pro with Jest and the official unit testing library for Vue.js - Vue Test Utils
+    <div>
+      <ul>
+        # Real items printed out
+        <li><strong>Iron Man</strong></li>
+        <li><strong>Avengers</strong></li>
+        <li><strong>Infitinity War</strong></li>
+      </ul>
+    </div>
 
-In this course, you’ll learn everything you need to know to write proper unit tests for your Vue components.
+  console.log specs/test.spec.js:22
+    <div>
+      <ul>
+        # Stubbed items printed out
+        <listitem-stub movie="Iron Man"></listitem-stub>
+        <listitem-stub movie="Avengers"></listitem-stub>
+        <listitem-stub movie="Infitinity War"></listitem-stub>
+      </ul>
+    </div>
+``` 
 
-Not sure how to mount and render your component to perform assertions. Not sure what you should and shouldn't test? Or how to test a specific thing? This course is for you!
-
-**By the end of this testing course you will know**
-- Which tools are required for an efficient testing workflow
-- How to mount and render your Vue components
-- How to programmatically interact with your components through Vue Test Utils
-- How to test computed properties and watchers
-- How to test Vue.js lifecycle methods
-- How to traverse the DOM and test …
-- How to stub child components
-- How to test that a Vuex Store is injected properly
-
-You need a basic understanding of testing in JavaScript and Jest. We recommend watching [JavaScript Testing Fundamentals](https://vueschool.io/courses/javascript-testing-fundamentals) and [Test with Jest](https://vueschool.io/courses/test-with-jest) if you're not already familiar with the topics.
-
-[Click here to watch the testing course](https://vueschool.io/courses/learn-how-to-test-vuejs-components).
+4. Use mount as default approach as it helps to detect potential errors regarding child componets early
