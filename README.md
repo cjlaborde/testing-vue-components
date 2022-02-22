@@ -291,3 +291,59 @@ const ListItemStub = {
 
 ```
 9. If you like it you can update the stub by pressing **u**
+
+
+### How to test that a Vuex Store is injected into a Vue.js component
+1. Add vuex to the test and then connect the component to the store
+```js
+test("store is loaded ", () => {
+  const wrapper = mount(SaladBowlComponent, {
+    store,
+  });
+  store.state.salad.push("cucumber");
+
+  expect(wrapper.vm.salad).toEqual(["cucumber"]);
+});
+```
+2. Second test fails because we need to add individual test to each store
+3. So I added a beforeEach
+4. Problem now is that we are polluting the global vue object
+5. To resolve this issue use createLocalVue() to create a local vue instance
+6. Then we need to pass it down via mount option
+```js
+import Vuex from "vuex";
+// import Vue from "vue";
+import { mount, createLocalVue } from "@vue/test-utils";
+
+import SaladBowlComponent from "@/salad-bowl";
+import saladStore from "@/store/salad-store";
+
+const localVue = createLocalVue();
+
+localVue.use(Vuex);
+
+let store;
+
+beforeEach(() => {
+  store = new Vuex.Store(saladStore);
+});
+
+test("store is loaded ", () => {
+  const wrapper = mount(SaladBowlComponent, {
+    store,
+    localVue,
+  });
+  store.state.salad.push("cucumber");
+
+  expect(wrapper.vm.salad).toEqual(["cucumber"]);
+});
+
+test("store works", () => {
+  const wrapper = mount(SaladBowlComponent, {
+    store,
+    localVue,
+  });
+  wrapper.vm.addIngredient("tomato");
+  expect(wrapper.vm.salad).toEqual(["tomato"]);
+});
+```
