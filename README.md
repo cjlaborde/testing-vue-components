@@ -125,9 +125,45 @@ describe("watch", () => {
 });
 ```
 4. instead of separate we can test both celsius and fahrenheit
-5. 
+5. We can use setPros to allow us to change props while the component is mounted already
+6. Had same problem and had to add Async with await to make code work   
 
+### Learn How To Test Vue.js Methods
+1. Get the component from the component ` const { composeUrl } = GithubCard.methods;`
+2. We can run the function as often as we want since is not impacting the vue instance
+```js
+describe("methods", () => {
+  test("composeUrl", () => {
+    const { composeUrl } = GithubCard.methods;
+    expect(composeUrl(123).toBe("https://api.github.com/users/123"));
+    expect(composeUrl("fred").toBe("https://api.github.com/users/fred"));
+  });
+});
+```
+3. Now we will test `fetchData`
+4. We can get the original code and put it in code to plan what we do piece by piece
+5. We can pass methods in mount options
+```js
+  test("fetchData", () => {
+    const wrapper = mount(GithubCard, {
+      methods: {
+        // this.url = this.composeUrl(this.username)
+        // we will always use same url in this rest so just make it static
+        composeUrl: () => "url",
+      },
+    });
+```   
+6. `const response = await fetch(this.url);` more tricky, so we use mock
+7. We can define for now the mock right in the function
+```js
+   // mockResolvedValue to return a promise that will resolve, an object some data with json as the key
+    window.fetch = jest.fn().mockResolvedValue({
+      json: "data",
+    });
+ ```
+8. Another resolve `this.data = await response.json();`
 
-
+9. You need to remove methods since is deprecreated and mock it like this instead 
+ `wrapper.vm.composeUrl = jest.fn().mockReturnValue("url");`
 
 
