@@ -212,3 +212,82 @@ describe("methods", () => {
   expect(wrapper.vm.basket).toEqual(expect.arrayContaining(["banana"]));
   expect(wrapper.findAll("li").length).toBe(1);
 ```
+
+### How to Stub a Vue.js Child Component
+1. Stubbing Means we replace the implementation of something existing with one that fits our need  for testing
+2. Similar to mocking but often more complex in implementation
+3. When you use shallowMount it creates stubs automatically
+```js
+test("shallowMount", () => {
+  const wrapper = shallowMount(ListComponent);
+  expect(wrapper).toMatchSnapshot();
+});
+```
+4. We can see the snap generated inside the snapshot
+```html
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shallowMount 1`] = `
+<div>
+  <ul>
+    <listitem-stub movie="Iron Man"></listitem-stub>
+    <listitem-stub movie="Avengers"></listitem-stub>
+    <listitem-stub movie="Infitinity War"></listitem-stub>
+  </ul>
+</div>
+`;
+```
+
+5. To get access to the stubs we can use options and add second argument to define our own stubs
+```js
+test("shallowMount", () => {
+  const wrapper = shallowMount(ListComponent, {
+    stubs: {
+      ListItem: `<div class="list-item" />`,
+    },
+  });
+  expect(wrapper).toMatchSnapshot();
+});
+
+```
+6. Now we can compare to the one we added with the one that was automatically generated
+```html
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`shallowMount 1`] = `
+<div>
+  <ul>
+    <listitem-stub movie="Iron Man"></listitem-stub>
+    <listitem-stub movie="Avengers"></listitem-stub>
+    <listitem-stub movie="Infitinity War"></listitem-stub>
+  </ul>
+</div>
+`;
+
+```
+7. Now lets define a stub component and we would prepare as it we would prepare any vue option
+```js
+const ListItemStub = {
+  template: `<li>{{ movie }}</li>`,
+  props: ["movie"],
+};
+```
+8. Compare again
+```html
+
+    - Snapshot
+    + Received
+
+      <div>
+        <ul>
+    -     <listitem-stub movie="Iron Man"></listitem-stub>
+    -     <listitem-stub movie="Avengers"></listitem-stub>
+    -     <listitem-stub movie="Infitinity War"></listitem-stub>
+    +     <li>Iron Man</li>
+    +     <li>Avengers</li>
+    +     <li>Infitinity War</li>
+        </ul>
+      </div>
+
+```
+9. If you like it you can update the stub by pressing **u**
