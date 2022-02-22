@@ -167,3 +167,32 @@ describe("methods", () => {
  `wrapper.vm.composeUrl = jest.fn().mockReturnValue("url");`
 
 
+### Learn How to Test Vue.js Lifecycle Methods
+1. check that the mounted method ran after mounting the Component `    expect(wrapper.vm.interval).not.toBe(undefined);`
+2. Now we need to check if code in interval ran correctly but that is tricky
+3. When ever we work with timer functions I recommend to use jest fake timers
+```js
+    expect(wrapper.vm.counter).toBe(0);
+    // 1000 = 1 second
+    jest.advanceTimersByTime(1000);
+    expect(wrapper.vm.counter).toBe(1);
+```
+
+4. Then check again to make sure is working properly 
+```js
+    jest.advanceTimersByTime(1000);
+    expect(wrapper.vm.counter).toBe(1);
+    jest.advanceTimersByTime(1000);
+    expect(wrapper.vm.counter).toBe(2);
+```
+5. Now we need to test if instance gets destroyed
+6. Since we going to reuse `jest.useFakeTimers();` Put the line of code outside the tests
+7. We going to use Spies lets us watch a function and tell us if it called or not
+8. Is important that we set up the spies before vue mounts the instance since vue transform the object into vm object
+9. We going to use -1 since this save us if we use another number in the future test would still work
+10. Check that when we advance the timer the spy was correctly called
+```js
+    wrapper.vm.counter = wrapper.vm.timer - 1;
+    jest.advanceTimersByTime(1000);
+    expect(beforeDestroyedSpy).toHaveBeenCalled();
+```
