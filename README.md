@@ -196,3 +196,19 @@ describe("methods", () => {
     jest.advanceTimersByTime(1000);
     expect(beforeDestroyedSpy).toHaveBeenCalled();
 ```
+
+### Traversing The DOM
+1. we going to learn how to find elements in DOM element representation of vue and how to fire events like click
+2. We can use wrapper.find to find elements `  const button = wrapper.find("button");`
+3. We then assign the value to fruit with input and trigger it
+```js
+  input.element.value = "banana";
+  input.trigger("input");
+```
+4. The we trigger button with a click to remove the fruit from fruits and then check they where moved to the basket
+```js
+  await button.trigger("click");
+  expect(wrapper.vm.fruit).toBe("");
+  expect(wrapper.vm.basket).toEqual(expect.arrayContaining(["banana"]));
+  expect(wrapper.findAll("li").length).toBe(1);
+```
